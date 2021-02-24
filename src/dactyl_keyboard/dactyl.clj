@@ -31,8 +31,8 @@
 ;; Shape parameters ;;
 ;;;;;;;;;;;;;;;;;;;;;;
 
-(def nrows 6)
-(def ncols 6)
+(def nrows 4)
+(def ncols 5)
 
 (def column-curvature (deg2rad 17))                         ; 15                        ; curvature of the columns
 (def row-curvature (deg2rad (if (> nrows 4) 1 4)))                             ; 5                   ; curvature of the rows
@@ -41,20 +41,21 @@
     6 3.1
     5 2.1 
     4 1.75))
-(def centercol 3)                                           ; controls left-right tilt / tenting (higher number is more tenting)
-(def tenting-angle (deg2rad 28))                            ; or, change this for more precise tenting control
+(def centercol 2)                                           ; controls left-right tilt / tenting (higher number is more tenting)
+(def tenting-angle (deg2rad 17))                            ; or, change this for more precise tenting control
 (def column-style :standard)
 (defn column-offset [column] (cond
                                (= column 2) [0 2.8 -6.5]
                                (= column 3) [0 0 -0.5]
-                               (>= column 4) [0 -16 6]
+                               (>= column 4) [0 -16 4]
                                :else [0 0 0]))
 
 (def keyboard-z-offset (case nrows 
     6 20
     5 10.5 
-    4 9))                                   ; controls overall height; original=9 with centercol=3; use 16 for centercol=2
-(def extra-width 2)                                       ; extra space between the base of keys; original= 2
+    4 12))                                   ; controls overall height; original=9 with centercol=3; use 16 for centercol=2
+
+(def extra-width 2.75)                                       ; extra space between the base of keys; original= 2
 (def extra-height 1.7)                                      ; original= 0.5
 
 (def wall-z-offset -7)                                      ; -5                ; original=-15 length of the first downward-sloping part of the wall (negative)
@@ -381,6 +382,8 @@
   (apply union
          (for [column columns
                row rows
+               ;; :when (
+                         ;; not= row lastrow)]
                :when (or (.contains [2 3] column)
                          (not= row lastrow))]
            (->> shape
@@ -831,7 +834,7 @@ need to adjust for difference for thumb-z only"
 (def usb-holder-offset-coordinates (case nrows 
     6 [-24.9 (if use_hotswap 67.3 70.9) usb-holder-bottom-offset]
     5 [-39 (if use_hotswap 57.3 55.5) usb-holder-bottom-offset]
-    4 [-41.5 (if use_hotswap 50.28 48.9) usb-holder-bottom-offset]))
+    4 [-25.9 (if use_hotswap 50.28 48.9) usb-holder-bottom-offset]))
 (def usb-holder (translate usb-holder-offset-coordinates usb-holder))
 (def usb-holder-space
   (translate [0 0 (/ usb-holder-bottom-offset 2)]

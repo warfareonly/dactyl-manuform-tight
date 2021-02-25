@@ -47,7 +47,7 @@
 (defn column-offset [column] (cond
                                (= column 2) [0 2.8 -6.5]
                                (= column 3) [0 -0.5 0]
-                               (>= column 4) [0 -16 3.5]
+                               (>= column 4) [0 -16 3.75]
                                :else [0 0 0]))
 
 (def keyboard-z-offset (case nrows 

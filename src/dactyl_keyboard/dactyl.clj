@@ -34,7 +34,7 @@
 (def nrows 4)
 (def ncols 5)
 
-(def column-curvature (deg2rad 17))                         ; 15                        ; curvature of the columns
+(def column-curvature (deg2rad 20))                         ; 15                        ; curvature of the columns
 (def row-curvature (deg2rad (if (> nrows 4) 1 4)))                             ; 5                   ; curvature of the rows
 (def centerrow (if (> nrows 4) 2.1 1.75))                              ; controls front-back tilt
 (def centerrow (case nrows
@@ -46,8 +46,8 @@
 (def column-style :standard)
 (defn column-offset [column] (cond
                                (= column 2) [0 2.8 -6.5]
-                               (= column 3) [0 0 -0.5]
-                               (>= column 4) [0 -16 4]
+                               (= column 3) [0 -0.5 0]
+                               (>= column 4) [0 -16 3.75]
                                :else [0 0 0]))
 
 (def keyboard-z-offset (case nrows 
@@ -383,7 +383,7 @@
          (for [column columns
                row rows
                ;; :when (
-                         ;; not= row lastrow)]
+               ;;           not= row lastrow)]
                :when (or (.contains [2 3] column)
                          (not= row lastrow))]
            (->> shape
@@ -444,13 +444,13 @@
   (apply union
          (concat
            ;; Row connections
-           ; (for [column (range 0 (dec ncols))
-           ;       row (range 0 lastrow)]
-           ;   (triangle-hulls
-           ;     (key-place (inc column) row web-post-tl)
-           ;     (key-place column row web-post-tr)
-           ;     (key-place (inc column) row web-post-bl)
-           ;     (key-place column row web-post-br)))
+           (for [column (range 0 (dec ncols))
+                 row (range 0 lastrow)]
+             (triangle-hulls
+               (key-place (inc column) row web-post-tl)
+               (key-place column row web-post-tr)
+               (key-place (inc column) row web-post-bl)
+               (key-place column row web-post-br)))
 
            ;; Column connections
            (for [column columns
@@ -462,13 +462,13 @@
                (key-place column (inc row) web-post-tr)))
 
            ;; Diagonal connections
-           ; (for [column (range 0 (dec ncols))
-           ;       row (range 0 cornerrow)]
-           ;   (triangle-hulls
-           ;     (key-place column row web-post-br)
-           ;     (key-place column (inc row) web-post-tr)
-           ;     (key-place (inc column) row web-post-bl)
-           ;     (key-place (inc column) (inc row) web-post-tl)))
+           (for [column (range 0 (dec ncols))
+                 row (range 0 cornerrow)]
+             (triangle-hulls
+               (key-place column row web-post-br)
+               (key-place column (inc row) web-post-tr)
+               (key-place (inc column) row web-post-bl)
+               (key-place (inc column) (inc row) web-post-tl)))
            )))
 
 ;;;;;;;;;;;;
@@ -538,17 +538,17 @@ need to adjust for difference for thumb-z only"
 
 (def thumb-connectors
   (union
-    ; (->> (triangle-hulls                                         ; top two
-    ;   (thumb-m-place web-post-tr)
-    ;   (thumb-m-place web-post-br)
-    ;   (thumb-r-place web-post-tl)
-    ;   (thumb-r-place web-post-bl)) (color RED))
-    ; (->> (triangle-hulls                                         ; top two
-    ;   (thumb-m-place web-post-tl)
-    ;   (thumb-l-place web-post-tr)
-    ;   (thumb-m-place web-post-bl)
-    ;   (thumb-l-place web-post-br)
-    ;   (thumb-m-place web-post-bl)) (color ORA))
+    (->> (triangle-hulls                                         ; top two
+      (thumb-m-place web-post-tr)
+      (thumb-m-place web-post-br)
+      (thumb-r-place web-post-tl)
+      (thumb-r-place web-post-bl)) (color RED))
+    (->> (triangle-hulls                                         ; top two
+      (thumb-m-place web-post-tl)
+      (thumb-l-place web-post-tr)
+      (thumb-m-place web-post-bl)
+      (thumb-l-place web-post-br)
+      (thumb-m-place web-post-bl)) (color ORA))
     (->> (triangle-hulls                                         ; top two to the main keyboard, starting on the left
       ; (key-place 2 lastrow web-post-br)
       ; (key-place 3 lastrow web-post-bl)
@@ -580,7 +580,7 @@ need to adjust for difference for thumb-z only"
       (key-place 0 cornerrow (translate (wall-locate1 -1 0) fat-web-post-bl))
       (key-place 0 cornerrow (translate (wall-locate2 -1 0) web-post-bl))
       (key-place 0 cornerrow web-post-bl)
-      ;(thumb-r-place web-post-tr)
+      ; (thumb-r-place web-post-tr)
       (thumb-r-place web-post-tl)
       (thumb-m-place web-post-tr)
       (key-place 0 cornerrow (translate (wall-locate2 -1 0) web-post-bl))
@@ -595,12 +595,12 @@ need to adjust for difference for thumb-z only"
       (thumb-r-place fat-web-post-tl)
       (thumb-r-place fat-web-post-tr)
       (key-place 1 cornerrow web-post-br)
-      ; (key-place 2 lastrow web-post-tl)
+      ;; (key-place 2 lastrow web-post-tl)
       ) (color NBL))
     (->> (triangle-hulls
       (key-place 2 lastrow web-post-tl)
-      ; (thumb-r-place fat-web-post-tr)
-      ; (key-place 2 lastrow web-post-bl)
+      ;; (thumb-r-place fat-web-post-tr)
+      ;; (key-place 2 lastrow web-post-bl)
       (thumb-r-place fat-web-post-br)) (color PUR))
     (->> (triangle-hulls
       (thumb-r-place web-post-br)
@@ -733,7 +733,7 @@ need to adjust for difference for thumb-z only"
   (union (->> (screw-insert 2 0 bottom-radius top-radius height screw-insert-bc) (color RED)) ; top middle
          (->> (screw-insert 0 1 bottom-radius top-radius height screw-insert-ml) (color PIN)) ; left
          (->> (screw-insert 0 lastrow bottom-radius top-radius height screw-insert-thmb) (color BRO)) ;thumb
-         (->> (screw-insert (- lastcol 1) 0 bottom-radius top-radius height screw-insert-br) (color PUR)) ; top right
+         ;; (->> (screw-insert (- lastcol 1) 0 bottom-radius top-radius height screw-insert-br) (color PUR)) ; top right
          (->> (screw-insert 2 (+ lastrow 1) bottom-radius top-radius height screw-insert-fc) (color BLA)) ))  ;bottom middle
 
 ; Hole Depth Y: 4.4
@@ -890,15 +890,15 @@ need to adjust for difference for thumb-z only"
         (difference
           (union
             (->> model-right 
-              ;(color BLU)
+              ;; (color BLU)
             )
-            caps
-            thumbcaps
+            ;; caps
+            ;; thumbcaps
             (debug key-space-below)
             (debug thumb-space-below)
             (debug thumb-space-hotswap)
             (debug usb-holder)
-            ;(debug okke-right)
+            ;; (debug okke-right)
             )
           (translate [0 0 -20] (cube 350 350 40)))))
 

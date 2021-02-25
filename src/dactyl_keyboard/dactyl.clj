@@ -47,7 +47,7 @@
 (defn column-offset [column] (cond
                                (= column 2) [0 2.8 -6.5]
                                (= column 3) [0 -0.5 0]
-                               (>= column 4) [0 -16 3.75]
+                               (>= column 4) [0 -16 3.5]
                                :else [0 0 0]))
 
 (def keyboard-z-offset (case nrows 
@@ -834,7 +834,7 @@ need to adjust for difference for thumb-z only"
 (def usb-holder-offset-coordinates (case nrows 
     6 [-24.9 (if use_hotswap 67.3 70.9) usb-holder-bottom-offset]
     5 [-39 (if use_hotswap 57.3 55.5) usb-holder-bottom-offset]
-    4 [-25.9 (if use_hotswap 50.28 48.9) usb-holder-bottom-offset]))
+    4 [-24.5 (if use_hotswap 50.28 49.4) usb-holder-bottom-offset]))
 (def usb-holder (translate usb-holder-offset-coordinates usb-holder))
 (def usb-holder-space
   (translate [0 0 (/ usb-holder-bottom-offset 2)]

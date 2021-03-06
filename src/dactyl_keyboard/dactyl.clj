@@ -53,7 +53,7 @@
 (def keyboard-z-offset (case nrows 
     6 20
     5 10.5 
-    4 12))                                   ; controls overall height; original=9 with centercol=3; use 16 for centercol=2
+    4 10))                                   ; controls overall height; original=9 with centercol=3; use 16 for centercol=2
 
 (def extra-width 2.75)                                       ; extra space between the base of keys; original= 2
 (def extra-height 1.7)                                      ; original= 0.5
@@ -382,10 +382,10 @@
   (apply union
          (for [column columns
                row rows
-               ;; :when (
-               ;;           not= row lastrow)]
-               :when (or (.contains [2 3] column)
-                         (not= row lastrow))]
+               :when (
+                         not= row lastrow)]
+               ;; :when (or (.contains [2 3] column)
+               ;;           (not= row lastrow))]
            (->> shape
                 (key-place column row)))))
 (def key-holes
@@ -542,7 +542,8 @@ need to adjust for difference for thumb-z only"
       (thumb-m-place web-post-tr)
       (thumb-m-place web-post-br)
       (thumb-r-place web-post-tl)
-      (thumb-r-place web-post-bl)) (color RED))
+      (thumb-r-place web-post-bl)
+      ) (color RED))
     (->> (triangle-hulls                                         ; top two
       (thumb-m-place web-post-tl)
       (thumb-l-place web-post-tr)
@@ -688,11 +689,14 @@ need to adjust for difference for thumb-z only"
     ; left-back-corner
     (key-wall-brace 0 0 0 1 web-post-tl 0 0 -1 0 web-post-tl)
     ; front wall
-    (key-wall-brace 3 lastrow 0   -1 web-post-bl 3   lastrow 0.5 -1 web-post-br)
-    (key-wall-brace 3 lastrow 0.5 -1 fat-web-post-br 4 cornerrow 0.5 -1 fat-web-post-bl)
+    ;; (key-wall-brace 3 lastrow 0   -1 web-post-bl 3   lastrow 0.5 -1 web-post-br)
+    (key-wall-brace 3 (dec lastrow) 0   -1 web-post-bl 3   lastrow 0.5 -1 web-post-br)
+    ;; (key-wall-brace 3 lastrow 0.5 -1 fat-web-post-br 4 cornerrow 0.5 -1 fat-web-post-bl)
+    (key-wall-brace 3 (dec lastrow) 0.5 -1 fat-web-post-br 4 cornerrow 0.5 -1 fat-web-post-bl)
     (for [x (range 4 ncols)] (key-wall-brace x cornerrow 0 -1 fat-web-post-bl      x  cornerrow 0 -1 fat-web-post-br)) ; TODO fix extra wall
     (for [x (range 5 ncols)] (key-wall-brace x cornerrow 0 -1 fat-web-post-bl (dec x) cornerrow 0 -1 fat-web-post-br))
-    (->> (wall-brace thumb-r-place 0 -1 fat-web-post-br (partial key-place 3 lastrow) 0 -1 web-post-bl) (color RED))
+    ;; (->> (wall-brace thumb-r-place 0 -1 fat-web-post-br (partial key-place 3 lastrow) 0 -1 web-post-bl) (color RED))
+    (->> (wall-brace thumb-r-place 0 -1 fat-web-post-br (partial key-place 3 (dec lastrow)) 0 -1 web-post-bl) (color RED))
     ; thumb walls
     (->> (wall-brace thumb-r-place  0 -1 fat-web-post-br thumb-r-place  0 -1 fat-web-post-bl) (color ORA))
     (->> (wall-brace thumb-m-place  0 -1 fat-web-post-br thumb-m-place  0 -1 fat-web-post-bl) (color YEL))
@@ -734,7 +738,8 @@ need to adjust for difference for thumb-z only"
          (->> (screw-insert 0 1 bottom-radius top-radius height screw-insert-ml) (color PIN)) ; left
          (->> (screw-insert 0 lastrow bottom-radius top-radius height screw-insert-thmb) (color BRO)) ;thumb
          ;; (->> (screw-insert (- lastcol 1) 0 bottom-radius top-radius height screw-insert-br) (color PUR)) ; top right
-         (->> (screw-insert 2 (+ lastrow 1) bottom-radius top-radius height screw-insert-fc) (color BLA)) ))  ;bottom middle
+         ;; (->> (screw-insert 2 (+ lastrow 1) bottom-radius top-radius height screw-insert-fc) (color BLA)) )  ;bottom middle
+))
 
 ; Hole Depth Y: 4.4
 (def screw-insert-height 5.5)
@@ -885,22 +890,22 @@ need to adjust for difference for thumb-z only"
 (spit "things/left.scad"
       (write-scad model-left))
 
-(spit "things/test.scad"
-      (write-scad
-        (difference
-          (union
-            (->> model-right 
-              ;; (color BLU)
-            )
-            ;; caps
-            ;; thumbcaps
-            (debug key-space-below)
-            (debug thumb-space-below)
-            (debug thumb-space-hotswap)
-            (debug usb-holder)
-            ;; (debug okke-right)
-            )
-          (translate [0 0 -20] (cube 350 350 40)))))
+;; (spit "things/test.scad"
+;;       (write-scad
+;;         (difference
+;;           (union
+;;             (->> model-right 
+;;               ;; (color BLU)
+;;             )
+;;             ;; caps
+;;             ;; thumbcaps
+;;             (debug key-space-below)
+;;             (debug thumb-space-below)
+;;             (debug thumb-space-hotswap)
+;;             (debug usb-holder)
+;;             ;; (debug okke-right)
+;;             )
+;;           (translate [0 0 -20] (cube 350 350 40)))))
 
 (def bottom-plate-thickness 2)
 (def screw-insert-bottom-plate-bottom-radius (+ screw-insert-bottom-radius 0.6))
@@ -922,6 +927,24 @@ need to adjust for difference for thumb-z only"
     (difference bottom-plate-blank
                 screw-cutouts-fillets)
   ))
+
+(spit "things/test.scad"
+      (write-scad
+        (difference
+          (union
+            (->> model-right 
+              ;; (color BLU)
+            )
+            ;; caps
+            ;; thumbcaps
+            (debug key-space-below)
+            (debug thumb-space-below)
+            (debug thumb-space-hotswap)
+            (debug usb-holder)
+            ;; bottom-plate
+            ;; (debug okke-right)
+            )
+          (translate [0 0 -20] (cube 350 350 40)))))
 
 (spit "things/right-plate-cut.scad"
       (write-scad bottom-plate))

@@ -32,7 +32,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;
 
 (def nrows 4)
-(def ncols 5)
+(def ncols 6)
 
 (def column-curvature (deg2rad 20))                         ; 15                        ; curvature of the columns
 (def row-curvature (deg2rad (if (> nrows 4) 1 4)))                             ; 5                   ; curvature of the rows
@@ -53,7 +53,7 @@
 (def keyboard-z-offset (case nrows 
     6 20
     5 10.5 
-    4 12))                                   ; controls overall height; original=9 with centercol=3; use 16 for centercol=2
+    4 16))                                   ; controls overall height; original=9 with centercol=3; use 16 for centercol=2
 
 (def extra-width 2.75)                                       ; extra space between the base of keys; original= 2
 (def extra-height 1.7)                                      ; original= 0.5
@@ -663,8 +663,8 @@ need to adjust for difference for thumb-z only"
 
 (def right-wall
   (union (key-corner lastcol 0 :tr)
-         (for [y (range 0 lastrow)] (key-wall-brace lastcol      y  1 0 web-post-tr lastcol y 1 0 web-post-br))
-         (for [y (range 1 lastrow)] (key-wall-brace lastcol (dec y) 1 0 web-post-br lastcol y 1 0 web-post-tr))
+         (for [y (range 0 lastrow)] (key-wall-brace lastcol      y  1 0 fat-web-post-tr lastcol y 1 0 fat-web-post-br))
+         (for [y (range 1 lastrow)] (key-wall-brace lastcol (dec y) 1 0 fat-web-post-br lastcol y 1 0 fat-web-post-tr))
          (key-corner lastcol cornerrow :br)))
 
 
@@ -731,9 +731,9 @@ need to adjust for difference for thumb-z only"
 (def screw-insert-fc   (if (> nrows 4) [16.7 7 screw-insert-bottom-offset] [21 9.5 screw-insert-bottom-offset]))
 (defn screw-insert-all-shapes [bottom-radius top-radius height]
   (union (->> (screw-insert 2 0 bottom-radius top-radius height screw-insert-bc) (color RED)) ; top middle
-         (->> (screw-insert 0 1 bottom-radius top-radius height screw-insert-ml) (color PIN)) ; left
+         ;; (->> (screw-insert 0 1 bottom-radius top-radius height screw-insert-ml) (color PIN)) ; left
          (->> (screw-insert 0 lastrow bottom-radius top-radius height screw-insert-thmb) (color BRO)) ;thumb
-         ;; (->> (screw-insert (- lastcol 1) 0 bottom-radius top-radius height screw-insert-br) (color PUR)) ; top right
+         (->> (screw-insert (- lastcol 1) 0 bottom-radius top-radius height screw-insert-br) (color PUR)) ; top right
          (->> (screw-insert 2 (+ lastrow 1) bottom-radius top-radius height screw-insert-fc) (color BLA)) ))  ;bottom middle
 
 ; Hole Depth Y: 4.4
